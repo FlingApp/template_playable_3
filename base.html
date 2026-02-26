@@ -78,7 +78,7 @@
 
     .app-icon,.story-cover{width:100%;max-width:500px;margin:0 auto;overflow:hidden}
     .app-icon{display:flex;align-items:center;justify-content:center;height:70px;background:transparent;flex-shrink:0;}
-    .app-icon img{width:40px;height:40px;border-radius:10px;box-shadow:0 0 10px rgba(219,219,219,0.7)}
+    .app-icon img{height:60px;width:auto;border-radius:0;box-shadow:none;background:transparent;display:block}
     
     .story-header{width:100%;max-width:500px;padding:15px 20px;margin:0 auto;background:transparent}
     .story-title{font-size:24px;font-weight:700;margin-bottom:5px;line-height:1.3}
@@ -86,6 +86,9 @@
     .story-paragraph{margin-bottom:20px;font-size:16px;line-height:1.5}
     
     .story-bottom{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:100;width:100%;pointer-events:none}
+    .landscape-stack { display: none; }
+    /* Копия стрелок для ландшафта — в портрете скрыта */
+    .scroll-indicator-landscape { display: none; }
     
     /* Обёртка для кнопки и стрелки */
     .button-wrapper {
@@ -158,20 +161,67 @@
         background: transparent;
         display:flex;
         flex-direction:column;
+        align-items:center;
+        justify-content:center;
         box-shadow: none;
       }
       .left-panel .story-cover{ display:block; }
       .right-panel .story-cover{ display:none; }
-      .left-panel .app-icon{max-width:100%;height:70px;flex-shrink:0}
-      .left-panel .story-cover{
-        width: min(40vw, calc(100vh - 70px));
-        height: min(40vw, calc(100vh - 70px));
-        margin: 0 auto;
+      /* Ландшафт: вертикальный стек (лого, баннер, кнопка) по центру правой панели */
+      .landscape-stack {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 20px;
+        width: 100%;
+        max-width: min(40vw, calc(100vh - 120px));
+      }
+      .landscape-stack .app-icon {
+        height: auto;
+        flex-shrink: 0;
+      }
+      .landscape-stack .app-icon img {
+        height: 60px;
+        width: auto;
+      }
+      .landscape-stack .story-cover {
+        width: min(40vw, calc(100vh - 200px));
+        aspect-ratio: 1 / 1;
+        height: auto;
+        margin: 0;
         flex: 0 0 auto;
         overflow: hidden;
         background-image: var(--banner-url);
         background-size: cover;
         background-position: center;
+      }
+      .landscape-stack .chapter-button {
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+      }
+      /* В ландшафте скрываем лого и баннер в шапке, показываем только стек */
+      .left-panel > .app-icon,
+      .left-panel > .story-cover { display: none !important; }
+      .left-panel .landscape-stack { display: flex; }
+      
+      /* Исправленные стрелки в ландшафте (усилен селектор, убраны конфликты) */
+      .scroll-indicator.scroll-indicator-landscape {
+        display: block !important;
+        position: fixed;
+        left: 50%;
+        top: 50%;
+        right: auto;
+        bottom: auto;
+        width: 24px;
+        height: 48px;
+        margin: 0;
+        transform: translate(-50%, -50%);
+        z-index: 200;
+      }
+      .scroll-indicator.scroll-indicator-landscape .arrow-segment {
+        left: 5px;
       }
       
       .right-panel{
@@ -186,36 +236,35 @@
       .right-panel .story-header{max-width:100%;padding:20px;flex-shrink:0}
       .right-panel .story-content{
         max-width:100%;
-        padding:0 5% 100px 5%;
+        padding:0 5% 20px 5%;
         flex:1;
         overflow-y:auto;
         margin:0;
       }
-      .right-panel .story-bottom{position:absolute;bottom:20px;right:20px;left:20px;width:auto;transform:none;pointer-events:none}
+      .right-panel .story-bottom{ display:none; }
       
       .button-wrapper { width: 100%; max-width: 100%; }
       .right-panel .chapter-button{width:100%;max-width:100%;margin:0}
-
-      .scroll-indicator {
-        top: auto;
-        bottom: 100%;
-        margin-bottom: 10px;
-        left: 50%;
-        right: auto;
-        transform: translateX(-50%);
-      }
-      @media(max-width:768px){ .scroll-indicator { transform: translateX(-50%) scale(0.8); } }
     }
   </style>
 </head>
 <body>
   <div class="container" style="--banner-url: url({{BANNER_BASE64}})">
     <div class="left-panel">
+      <!-- Портрет: лого в шапке -->
       <div class="app-icon">
         <img src="{{LOGO_BASE64}}" alt="logo">
       </div>
-
       <div class="story-cover"></div>
+
+      <!-- Ландшафт: вертикальный стек (лого, баннер, кнопка) в правой панели -->
+      <div class="landscape-stack">
+        <div class="app-icon">
+          <img src="{{LOGO_BASE64}}" alt="logo">
+        </div>
+        <div class="story-cover"></div>
+        <button type="button" class="chapter-button jump-box landscape-cta">Continue Reading</button>
+      </div>
     </div>
 
     <div class="right-panel">
@@ -237,6 +286,13 @@
 
         </div>
       </div>
+    </div>
+
+    <!-- Стрелки для ландшафта: вне панелей, чтобы не обрезались overflow — по центру страницы -->
+    <div class="scroll-indicator scroll-indicator-landscape">
+      <div class="arrow-segment segment-1"></div>
+      <div class="arrow-segment segment-2"></div>
+      <div class="arrow-segment segment-3"></div>
     </div>
   </div>
 
@@ -318,11 +374,13 @@
     // ==========================================
     // СКРИПТ 2: КЛИК ПО КНОПКЕ
     // ==========================================
-    document.querySelector('.jump-box').addEventListener('click', function () {
-      window.dispatchEvent(new CustomEvent('playable-cta-click', { 
-        bubbles: true,
-        cancelable: true 
-      }));
+    document.querySelectorAll('.jump-box').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        window.dispatchEvent(new CustomEvent('playable-cta-click', { 
+          bubbles: true,
+          cancelable: true 
+        }));
+      });
     });
   </script>
 </body>
