@@ -64,7 +64,7 @@
     
     .story-header{width:100%;max-width:500px;padding:15px 20px;margin:0 auto}
     .story-title{font-size:24px;font-weight:700;margin-bottom:5px;line-height:1.3}
-    .story-content{padding:0 20px 20px 20px;max-width:500px;margin:0 auto;border-radius:8px;white-space:pre-line}
+    .story-content{padding:0 5% 20px 5%;max-width:500px;margin:0 auto;border-radius:8px;white-space:pre-line}
     .story-paragraph{margin-bottom:20px;font-size:16px;line-height:1.5}
     
     .story-bottom{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:100;width:100%;pointer-events:none}
@@ -79,6 +79,7 @@
 
     .chapter-button{pointer-events:auto;display:block;width:100%;padding:16px 0;background:#5eb3f6;color:#fff;text-align:center;border-radius:50px;font-weight:600;font-size:18px;box-shadow:0 4px 8px rgba(0,0,0,0.2);transition:background-color .3s;border:none;outline:none;animation:breathe 1.5s ease-in-out infinite alternate}
     .chapter-button:active{background:rgba(94,179,246,0.85)}
+    .chapter-button.jump-box{color:#000}
     @keyframes breathe{0%{transform:scale(.98)}50%{transform:scale(1.02)}100%{transform:scale(.98)}}
     
     /* =========================================
@@ -117,7 +118,7 @@
       100% { opacity: 0; transform: translateY(32px) rotate(45deg); }
     }
 
-    @media(max-width:768px){.story-title{font-size:22px}.story-content{padding:0 15px 15px 15px}}
+    @media(max-width:768px){.story-title{font-size:22px}.story-content{padding:0 5% 15px 5%}}
     @media(max-width:480px){
       .story-title{font-size:20px}.story-paragraph{font-size:16px}
       .scroll-indicator { right: -25px; top: 50%; transform: translateY(-50%) scale(0.8); }
@@ -167,7 +168,7 @@
       .right-panel .story-header{max-width:100%;padding:20px;flex-shrink:0}
       .right-panel .story-content{
         max-width:100%;
-        padding:0 20px 100px 20px;
+        padding:0 5% 100px 5%;
         flex:1;
         overflow-y:auto;
         margin:0;
