@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>{{TITLE}}</title>
+  <title>Playable</title>
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <style>
     *{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
@@ -44,23 +44,18 @@
       padding-bottom: 80px;
     }
 
-    /* Баннер внутри скролла (только портрет) */
+    /* Баннер внутри скролла (только портрет) — одно изображение через CSS-переменную */
     .right-panel .story-cover {
       flex-shrink: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      display: block;
       overflow: hidden;
       width: 80vw;
       height: 80vw;
       max-height: 50vh;
       margin: 0 10vw 15px 10vw;
-    }
-    .right-panel .story-cover img {
-      width: 100%;
-      height: 100%;
-      display: block;
-      object-fit: cover;
+      background-image: var(--banner-url);
+      background-size: cover;
+      background-position: center;
     }
 
     .app-icon,.story-cover{width:100%;max-width:500px;margin:0 auto;overflow:hidden}
@@ -146,7 +141,7 @@
         flex-direction:column;
         box-shadow: none;
       }
-      .left-panel .story-cover{ display:flex; }
+      .left-panel .story-cover{ display:block; }
       .right-panel .story-cover{ display:none; }
       .left-panel .app-icon{max-width:100%;height:70px;flex-shrink:0}
       .left-panel .story-cover{
@@ -155,11 +150,10 @@
         margin: 0 auto;
         flex: 0 0 auto;
         overflow: hidden;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        background-image: var(--banner-url);
+        background-size: cover;
+        background-position: center;
       }
-      .left-panel .story-cover img{width:100%;height:100%;object-fit:cover;display:block;}
       
       .right-panel{
         width:50%;
@@ -196,25 +190,17 @@
   </style>
 </head>
 <body>
-  <div class="container">
+  <div class="container" style="--banner-url: url({{BANNER_BASE64}})">
     <div class="left-panel">
       <div class="app-icon">
         <img src="{{LOGO_BASE64}}" alt="logo">
       </div>
 
-      <div class="story-cover">
-        <img src="{{BANNER_BASE64}}" alt="banner">
-      </div>
+      <div class="story-cover"></div>
     </div>
 
     <div class="right-panel">
-      <div class="story-cover">
-        <img src="{{BANNER_BASE64}}" alt="banner">
-      </div>
-      <div class="story-header">
-        <h1 class="story-title">{{TITLE}}</h1>
-      </div>
-
+      <div class="story-cover"></div>
       <div class="story-content">
         <p class="story-paragraph">{{BODY}}</p>
       </div>

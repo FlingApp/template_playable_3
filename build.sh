@@ -3,7 +3,7 @@
 # Использование: ./build.sh  или  bash build.sh
 # Или одна сборка: ./build.sh <template_name> [output_file]
 #
-# Плейсхолдеры: {{TITLE}}, {{BODY}}, {{LOGO_BASE64}}, {{BANNER_BASE64}},
+# Плейсхолдеры: {{BODY}}, {{LOGO_BASE64}}, {{BANNER_BASE64}},
 #              {{GOOGLE_PLAY_URL}}, {{APPSTORE_URL}}, {{BASE_STYLES}}, {{BASE_BODY}}
 
 # Если вызвали через sh — перезапустить через bash
@@ -75,8 +75,7 @@ build_one() {
 
   extract_base "$BASE_HTML" "$tmpdir/base_styles.txt" "$tmpdir/base_body.txt"
 
-  local title body google_play_url appstore_url
-  title=$(read_file_raw "$RESOURCES/title.txt" "{{TITLE}}")
+  local body google_play_url appstore_url
   body=$(read_file_raw "$RESOURCES/body.txt" "{{BODY}}")
   google_play_url=$(read_file_raw "$RESOURCES/playstore_url.txt" "{{GOOGLE_PLAY_URL}}")
   appstore_url=$(read_file_raw "$RESOURCES/appstore_url.txt" "{{APPSTORE_URL}}")
@@ -100,7 +99,6 @@ build_one() {
   # Все подставляемые данные пишем в файлы (многострочные/большие ломают -v)
   printf '%s' "$logo_data" > "$tmpdir/logo_data.txt"
   printf '%s' "$banner_data" > "$tmpdir/banner_data.txt"
-  printf '%s' "$title" > "$tmpdir/title.txt"
   printf '%s' "$body" > "$tmpdir/body.txt"
   printf '%s' "$google_play_url" > "$tmpdir/google_play_url.txt"
   printf '%s' "$appstore_url" > "$tmpdir/appstore_url.txt"
@@ -111,16 +109,13 @@ build_one() {
   # Замена плейсхолдеров через awk (все данные читаем из файлов)
   awk -v tmpdir="$tmpdir" '
   BEGIN {
-    base_styles = ""; base_body = ""; title = ""; body = ""
+    base_styles = ""; base_body = ""; body = ""
     logo_data = ""; banner_data = ""; google_play_url = ""; appstore_url = ""
     f = tmpdir "/base_styles_wrapped.txt"
     while ((getline < f) > 0) base_styles = base_styles $0 "\n"
     close(f)
     f = tmpdir "/base_body.txt"
     while ((getline < f) > 0) base_body = base_body $0 "\n"
-    close(f)
-    f = tmpdir "/title.txt"
-    while ((getline < f) > 0) title = title (title ? "\n" : "") $0
     close(f)
     f = tmpdir "/body.txt"
     while ((getline < f) > 0) body = body (body ? "\n" : "") $0
@@ -141,7 +136,7 @@ build_one() {
   {
     gsub(/\{\{BASE_STYLES\}\}/, base_styles)
     gsub(/\{\{BASE_BODY\}\}/, base_body)
-    gsub(/\{\{TITLE\}\}/, title)
+    gsub(/\{\{TITLE\}\}/, "Playable")
     gsub(/\{\{BODY\}\}/, body)
     gsub(/\{\{GOOGLE_PLAY_URL\}\}/, google_play_url)
     gsub(/\{\{APPSTORE_URL\}\}/, appstore_url)
