@@ -3,7 +3,7 @@
 # Использование: ./build.sh  или  bash build.sh
 # Или одна сборка: ./build.sh <template_name> [output_file]
 #
-# Плейсхолдеры: {{BODY}}, {{LOGO_BASE64}}, {{BANNER_BASE64}},
+# Плейсхолдеры: {{BODY}}, {{LOGO_BASE64}}, {{BANNER_BASE64}}, {{BG_IMAGE_BASE64}},
 #              {{GOOGLE_PLAY_URL}}, {{APPSTORE_URL}}, {{BASE_STYLES}}, {{BASE_BODY}}
 
 # Если вызвали через sh — перезапустить через bash
@@ -80,11 +80,12 @@ build_one() {
   google_play_url=$(read_file_raw "$RESOURCES/playstore_url.txt" "{{GOOGLE_PLAY_URL}}")
   appstore_url=$(read_file_raw "$RESOURCES/appstore_url.txt" "{{APPSTORE_URL}}")
 
-  local logo_b64 banner_b64
+  local logo_b64 banner_b64 bg_b64
   logo_b64=$(image_to_base64 "$RESOURCES/logo.png")
   banner_b64=$(image_to_base64 "$RESOURCES/banner.png")
+  bg_b64=$(image_to_base64 "$RESOURCES/bg_image.png")
 
-  local logo_data banner_data
+  local logo_data banner_data bg_data
   if [[ -n "$logo_b64" ]]; then
     logo_data="data:image/png;base64,${logo_b64}"
   else
@@ -95,10 +96,16 @@ build_one() {
   else
     banner_data="{{BANNER_BASE64}}"
   fi
+  if [[ -n "$bg_b64" ]]; then
+    bg_data="data:image/png;base64,${bg_b64}"
+  else
+    bg_data="{{BG_IMAGE_BASE64}}"
+  fi
 
   # Все подставляемые данные пишем в файлы (многострочные/большие ломают -v)
   printf '%s' "$logo_data" > "$tmpdir/logo_data.txt"
   printf '%s' "$banner_data" > "$tmpdir/banner_data.txt"
+  printf '%s' "$bg_data" > "$tmpdir/bg_data.txt"
   printf '%s' "$body" > "$tmpdir/body.txt"
   printf '%s' "$google_play_url" > "$tmpdir/google_play_url.txt"
   printf '%s' "$appstore_url" > "$tmpdir/appstore_url.txt"
@@ -110,7 +117,8 @@ build_one() {
   awk -v tmpdir="$tmpdir" '
   BEGIN {
     base_styles = ""; base_body = ""; body = ""
-    logo_data = ""; banner_data = ""; google_play_url = ""; appstore_url = ""
+    logo_data = ""; banner_data = ""; bg_data = ""
+    google_play_url = ""; appstore_url = ""
     f = tmpdir "/base_styles_wrapped.txt"
     while ((getline < f) > 0) base_styles = base_styles $0 "\n"
     close(f)
@@ -132,6 +140,9 @@ build_one() {
     f = tmpdir "/banner_data.txt"
     while ((getline < f) > 0) banner_data = banner_data $0
     close(f)
+    f = tmpdir "/bg_data.txt"
+    while ((getline < f) > 0) bg_data = bg_data $0
+    close(f)
   }
   {
     gsub(/\{\{BASE_STYLES\}\}/, base_styles)
@@ -142,6 +153,7 @@ build_one() {
     gsub(/\{\{APPSTORE_URL\}\}/, appstore_url)
     gsub(/\{\{LOGO_BASE64\}\}/, logo_data)
     gsub(/\{\{BANNER_BASE64\}\}/, banner_data)
+    gsub(/\{\{BG_IMAGE_BASE64\}\}/, bg_data)
     print
   }' "$template_path" > "$output_file"
 
