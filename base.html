@@ -226,6 +226,9 @@
     // СКРИПТ 1: ОРИГИНАЛЬНЫЙ АВТО-СКРОЛЛ
     // ==========================================
     (function() {
+      // Флаг: false — автоскролл выключен; true — работает как обычно. Можно менять в консоли.
+      window.isAutoScrollingEnabled = false;
+
       var speedDelay = 50; 
       var scrollStep = 1;  
       var resumeDelay = 250; 
@@ -239,7 +242,7 @@
       var resumeTimeout;
 
       function performScroll() {
-        if (!isAutoScrolling) return;
+        if (!window.isAutoScrollingEnabled || !isAutoScrolling) return;
 
         var isLandscape = window.matchMedia("(orientation: landscape)").matches;
 
@@ -264,7 +267,7 @@
       }
 
       function resumeAutoScroll() {
-        if (isAutoScrolling) return;
+        if (!window.isAutoScrollingEnabled || isAutoScrolling) return;
         if (!hasScrollStarted) hasScrollStarted = true;
         isAutoScrolling = true;
         resumeTimeout = null;
@@ -272,6 +275,7 @@
       }
 
       function scheduleResume() {
+        if (!window.isAutoScrollingEnabled) return;
         clearTimeout(resumeTimeout);
         resumeTimeout = setTimeout(resumeAutoScroll, resumeDelay);
       }
@@ -287,8 +291,8 @@
       window.addEventListener('keyup', scheduleResume, { passive: true });
       window.addEventListener('wheel', scheduleResume, { passive: true });
       
-      // Запускаем автоскролл сам по себе через 1.5 сек после загрузки
-      setTimeout(scheduleResume, 1500);
+      // Запускаем автоскролл сам по себе через 1.5 сек после загрузки (только если включён)
+      if (window.isAutoScrollingEnabled) setTimeout(scheduleResume, 1500);
     })();
 
 
