@@ -76,6 +76,7 @@
 
 - **resources/logo.png** — заменяет логотип
 - **resources/banner.png** — заменяет баннер
+- **resources/bg_image.png** — заменяет фоновое изображение всей страницы
 - **resources/body.txt** — заменяет основной текст (основной контент)
 - **resources/playstore_url.txt** — ссылка на приложение в Google Play
 - **resources/appstore_url.txt** — ссылка на приложение в App Store
