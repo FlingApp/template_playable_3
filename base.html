@@ -82,15 +82,16 @@
       z-index: 1;
     }
 
-    /* Баннер внутри скролла (только портрет) — 1:1 квадрат через aspect-ratio */
+    /* Баннер внутри скролла (только портрет) — 1:1 квадрат, max-width = ширина iPhone Pro (393px) */
     .right-panel .story-cover {
       flex-shrink: 0;
       display: block;
       overflow: hidden;
-      width: 56vw;
+      width: 100%;
+      max-width: 393px;
       aspect-ratio: 1 / 1;
       height: auto;
-      margin: 0 20vw 15px 20vw;
+      margin: 0 auto 15px auto;
       background-image: var(--banner-url);
       background-size: cover;
       background-position: center;
@@ -102,10 +103,10 @@
     
     .story-header{width:100%;max-width:500px;padding:15px 20px;margin:0 auto;background:transparent}
     .story-title{font-size:24px;font-weight:700;margin-bottom:5px;line-height:1.3}
-    .story-content{padding:0 5% 20px 5%;max-width:60%;margin:0 auto;border-radius:8px;white-space:pre-line;background:transparent}
+    .story-content{padding:0 5% 20px 5%;max-width:393px;margin:0 auto;border-radius:8px;white-space:pre-line;background:transparent}
     .story-paragraph{margin-bottom:20px;font-size:15px;line-height:1.5}
     
-    .story-bottom{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:20;width:100%;pointer-events:none}
+    .story-bottom{position:fixed;bottom:50pt;left:50%;transform:translateX(-50%);z-index:20;width:100%;pointer-events:none}
     .landscape-stack { display: none; }
     /* Копия стрелок для ландшафта — в портрете скрыта */
     .scroll-indicator-landscape { display: none; }
@@ -129,7 +130,7 @@
     .scroll-indicator {
       position: absolute;
       top: 50%;
-      right: -35px; 
+      right: -50px; 
       width: 24px;
       height: 100%; 
       transform: translateY(-50%); 
@@ -162,7 +163,7 @@
     @media(max-width:768px){.story-title{font-size:22px}.story-content{padding:0 5% 15px 5%}}
     @media(max-width:480px){
       .story-title{font-size:20px}.story-paragraph{font-size:15px}
-      .scroll-indicator { right: -25px; top: 50%; transform: translateY(-50%) scale(0.8); }
+      .scroll-indicator { right: -40px; top: 50%; transform: translateY(-50%) scale(0.8); }
     }
     
     /* ГОРИЗОНТАЛЬНАЯ ОРИЕНТАЦИЯ (LANDSCAPE) — без изменений: текст слева, обложка справа */
@@ -207,6 +208,7 @@
       }
       .landscape-stack .story-cover {
         width: min(30vw, calc(100vh - 200px));
+        max-width: 393px;
         aspect-ratio: 1 / 1;
         height: auto;
         margin: 0;
@@ -255,8 +257,8 @@
       }
       .right-panel .story-header{max-width:100%;padding:20px;flex-shrink:0}
       .right-panel .story-content{
-        max-width:40vw;
-        padding:0 5% 20px 5%;
+        max-width:393px;
+        padding:50pt 5% 20px 5%; /* верхний отступ — часть скролла, текст закатывается под градиент */
         flex:1;
         overflow-y:auto;
         margin:0 auto;
